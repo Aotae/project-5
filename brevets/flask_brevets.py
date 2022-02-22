@@ -25,11 +25,6 @@ CONFIG = config.configuration()
 # Pages
 ###
 
-def insert():
-    pass
-def retrieve():
-    pass
-
 @app.route("/")
 @app.route("/index")
 def index():
