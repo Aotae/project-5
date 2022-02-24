@@ -68,7 +68,8 @@ def _calc_times():
 
 @app.route("/submit",methods=['POST'])
 def submit():
-    client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'],271017)
+    app.logger.debug("Hey we submitted")
+    client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'],27017)
     if not request:
         return flask.Response(status = 403)
     formtable = request.form['Controls']
@@ -87,12 +88,13 @@ def submit():
 
 @app.route("/display")
 def display():
-    client = MongoClient('mongodb://'+os.environ['MONGODB_HOSTNAME'],271017)
+    app.logger.debug("Hey we're trying to display")
+    client = MongoClient('mongodb://'+os.environ['MONGODB_HOSTNAME'],27017)
     if not client:
         app.logger.debug("Client is no?")
         return flask.jsonify(status=500,brevets={"Start":"","MaxDist":"", "Checkpoints":""})
     mdb = client.mydb
-    table = mdb.find_one(sort=[('_id'), pymongo.DESCENDING])
+    table = mdb.posts.find_one(sort=[('_id', pymongo.DESCENDING)])
     if not table:
         return flask.jsonify(status=404,brevets={"Start":"","MaxDist":"", "Checkpoints":""})
     Start = table['Start']

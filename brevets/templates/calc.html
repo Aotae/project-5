@@ -114,8 +114,8 @@ one.  We allocate it the full 12 columns of the bootstrap grid.
 </div>
 <!-- row -->
 <div>
-    <input value="Submit" type="button" onclick="submit()"/>
-    <input value="Display" type="button" onclick="display()"/>
+    <input value="Submit" type="button" onclick="submit_f()"/>
+    <input value="Display" type="button" onclick="display_f()"/>
 </div>
 </form>
 
@@ -153,7 +153,7 @@ one.  We allocate it the full 12 columns of the bootstrap grid.
         console.log(err);
         });
     }
-    function submit() {
+    function submit_f() {
         var maxdist = $('#brevet_dist_km').val();
         var startdate = $('#begin_date').val();
         var mile = $("[name='miles']");
@@ -173,6 +173,8 @@ one.  We allocate it the full 12 columns of the bootstrap grid.
                     "closes": close[i].value
                 });
             }
+        }
+        for (let i = 0; i < 20; i++) {
             km[i].value = null;
             mile[i].value = null;
             location[i].value = null;
@@ -181,23 +183,27 @@ one.  We allocate it the full 12 columns of the bootstrap grid.
         }
         $.post(SCRIPT_ROOT + "/submit", {"Start":startdate,"MaxDist":maxdist,"Controls":JSON.stringify(controles)})
     }
-    function display() {
+    function display_f(){
         $.getJSON(SCRIPT_ROOT + "/display").done(
             function (data) {
+                console.log("Hey we got here")
                 console.log(data)
                 var Start = data.brevets['Start'];
-                /*if (data.status === 404 || data.status === 500) {
+                if (data.status === 404 || data.status === 500) {
+                    console.log("We got into a bad status")
                     return;
-                }*/
+                }
                 var MaxDist = data.brevets['MaxDist'];
-                var Checkpoints = JSON.parse(data.brevets['Controles']);
+                var Checkpoints = JSON.parse(data.brevets['Checkpoints']);
                 $('#brevet_dist_km').val(MaxDist);
                 $('#begin_date').val(Start);
+                console.log("brevets and begin");
                 var mile = $("[name='miles']");
                 var km = $("[name='km']");
                 var location = $("[name='location']");
                 var open = $("[name='open']");
                 var close = $("[name='close']");
+                console.log("mkmloc");
                 for (let i = 0; i < Checkpoints.length; i++) {
                     km[i].value = Checkpoints[i]['km'];
                     mile[i].value = Checkpoints[i]['mi'];
