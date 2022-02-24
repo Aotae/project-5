@@ -70,11 +70,9 @@ def _calc_times():
 def submit():
     client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'],271017)
     if not request:
-        client.close()
         return flask.Response(status = 403)
     formtable = request.form['Controls']
     if formtable == "[]":
-        client.close()
         return flask.Response(status = 403)
     else:
         table = {
@@ -91,12 +89,11 @@ def submit():
 def display():
     client = MongoClient('mongodb://'+os.environ['MONGODB_HOSTNAME'],271017)
     if not client:
-        client.close()
+        app.logger.debug("Client is no?")
         return flask.jsonify(status=500,brevets={"Start":"","MaxDist":"", "Checkpoints":""})
     mdb = client.mydb
     table = mdb.find_one(sort=[('_id'), pymongo.DESCENDING])
     if not table:
-        client.close()
         return flask.jsonify(status=404,brevets={"Start":"","MaxDist":"", "Checkpoints":""})
     Start = table['Start']
     MaxDist = table['MaxDist']

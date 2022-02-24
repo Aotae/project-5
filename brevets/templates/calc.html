@@ -186,9 +186,9 @@ one.  We allocate it the full 12 columns of the bootstrap grid.
             function (data) {
                 console.log(data)
                 var Start = data.brevets['Start'];
-                if (data.status === 404 || data.status === 500) {
+                /*if (data.status === 404 || data.status === 500) {
                     return;
-                }
+                }*/
                 var MaxDist = data.brevets['MaxDist'];
                 var Checkpoints = JSON.parse(data.brevets['Controles']);
                 $('#brevet_dist_km').val(MaxDist);
