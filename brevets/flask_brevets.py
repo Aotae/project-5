@@ -24,6 +24,25 @@ CONFIG = config.configuration()
 ###
 # Pages
 ###
+def insert(request):
+    app.logger.debug("Hey we submitted")
+    client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'],27017)
+    if not request:
+        return 403
+    formtable = request.form['Controls']
+    if formtable == "[]":
+        return 403
+    else:
+        table = {
+            'Start': request.form['Start'],
+            'MaxDist': request.form['MaxDist'],
+            'Checkpoints': request.form['Controls']
+            }
+        mdb = client.mydb
+        mdb.posts.insert_one(table)
+        client.close()
+        return 200
+
 
 @app.route("/")
 @app.route("/index")
@@ -68,23 +87,8 @@ def _calc_times():
 
 @app.route("/submit",methods=['POST'])
 def submit():
-    app.logger.debug("Hey we submitted")
-    client = MongoClient('mongodb://' + os.environ['MONGODB_HOSTNAME'],27017)
-    if not request:
-        return flask.Response(status = 403)
-    formtable = request.form['Controls']
-    if formtable == "[]":
-        return flask.Response(status = 403)
-    else:
-        table = {
-            'Start': request.form['Start'],
-            'MaxDist': request.form['MaxDist'],
-            'Checkpoints': request.form['Controls']
-            }
-        mdb = client.mydb
-        mdb.posts.insert_one(table)
-        client.close()
-        return flask.Response(status = 200)
+    return insert(request)
+
 
 @app.route("/display")
 def display():
@@ -92,10 +96,12 @@ def display():
     client = MongoClient('mongodb://'+os.environ['MONGODB_HOSTNAME'],27017)
     if not client:
         app.logger.debug("Client is no?")
+        raise Exception('bad connection with db')
         return flask.jsonify(status=500,brevets={"Start":"","MaxDist":"", "Checkpoints":""})
     mdb = client.mydb
     table = mdb.posts.find_one(sort=[('_id', pymongo.DESCENDING)])
     if not table:
+        raise Exception('table of controle times not found')
         return flask.jsonify(status=404,brevets={"Start":"","MaxDist":"", "Checkpoints":""})
     Start = table['Start']
     MaxDist = table['MaxDist']

@@ -5,7 +5,10 @@ Write your tests HERE AND ONLY HERE.
 """
 import nose    # Testing framework
 from nose.tools import assert_raises
+import flask
+
 from brevets.acp_times import close_time,open_time
+from brevets.flask_brevets import insert,display
 import logging
 import arrow
 
@@ -49,6 +52,17 @@ def test_valid():
     assert close_time(200,200,arr).datetime == arrow.Arrow(2022,2,7,13,30).datetime
     assert open_time(400,400,arr).datetime == arrow.Arrow(2022,2,7,12,8).datetime
     assert close_time(400,400,arr).datetime == arrow.Arrow(2022,2,8,3,0).datetime
+def test_norequest():
+    temp = insert(None)
+    assert(temp == 403)
+    
+def test_sub_dis():
+    temp = {"Start":"02:00","MaxDist":"200km","Checkpoints":"12"}
+    insert(temp)
+    d = display()
+    assert(d == {"Start":'02:00',
+                 "MaxDist":"200km",
+                 "CheckPoints":"12"})
 
 
 
