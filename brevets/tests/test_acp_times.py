@@ -7,8 +7,8 @@ import nose    # Testing framework
 from nose.tools import assert_raises
 import flask
 
-from brevets.acp_times import close_time,open_time
-from brevets.flask_brevets import insert,display
+from acp_times import close_time,open_time
+from flask_brevets import insert,display
 import logging
 import arrow
 
@@ -63,7 +63,5 @@ def test_sub_dis():
     assert(d == {"Start":'02:00',
                  "MaxDist":"200km",
                  "CheckPoints":"12"})
-
-
 
 nose.run()
